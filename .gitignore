@@ -215,3 +215,6 @@ fabric.properties
 
 # Remove Python Library DN3
 dn3/
+
+# Remove pretrained weights
+pretrained_weights/
