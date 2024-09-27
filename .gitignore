@@ -218,3 +218,6 @@ dn3/
 
 # Remove pretrained weights
 pretrained_weights/
+
+# Remove result.txt
+result.txt
