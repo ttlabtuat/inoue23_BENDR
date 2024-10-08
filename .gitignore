@@ -221,3 +221,6 @@ pretrained_weights/
 
 # Remove result.txt
 result.txt
+
+# Remove EDFLIB
+EDFLIB/
