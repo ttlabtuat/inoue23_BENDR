@@ -25,7 +25,7 @@ from sklearn.model_selection import train_test_split
     前処理: なし（生の波形そのまま）
 - DataMakerCont2
     セグメント切り出し方法: DataMakerContと同じ
-    前処理: ノッチフィルタを適用
+    前処理: ノッチフィルタ（50 Hz）を適用
 '''
 
 
@@ -38,7 +38,7 @@ class DataMaker(object):
     _EDF_PATH = os.path.join(os.environ['HOME'], 'epilepsy_detect/input/EDF_labeled_CECTS50_JBHI/{0}/{0}.edf')
     
     # 1セグメントのサンプル数
-    _SEGMENT_SIZE = 512
+    _SEGMENT_SIZE = 192
     # 1セグメント内におけるピーク点前後のサンプル数の比率
     _SEGMENT_RATIO = (3, 7)
 
@@ -427,7 +427,7 @@ class DataMakerCont2(DataMakerCont):
         
         # active_chs をもとにEDFを読み込み
         edf = CREDF(edf_path, active_matches=active_chs)
-        # バンドパスフィルタを適用
+        # ノッチフィルタを適用
         edf = edf.apply_notch(50)
 
         # [n_samples, n_channels]の形で raw を取得
