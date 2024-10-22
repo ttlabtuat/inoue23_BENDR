@@ -35,7 +35,7 @@ class DataMaker(object):
         イテレータとして利用できるクラスです．
     '''
     # {}内には患者IDが入る
-    _EDF_PATH = os.path.join(os.environ['HOME'], 'epilepsy_detect/input/EDF_labeled_CECTS50_JBHI/{0}/{0}.edf')
+    _EDF_PATH = os.path.join(os.environ['HOME'], 'ssl_epilepsy/inoue23_BENDR/dataset/EDF_labeled_CECTS50_JBHI/{0}/{0}.edf')
     
     # 1セグメントのサンプル数
     _SEGMENT_SIZE = 192
@@ -411,8 +411,7 @@ class DataMakerRawCont(DataMakerCont):
 
 
 class DataMakerCont2(DataMakerCont):
-    _PATH_data = os.path.dirname(__file__)\
-        + '/__pycache__/{}_data_raw_stride.npy'
+    _PATH_data = os.path.dirname(__file__) + '/__pycache__/{}_data_raw_stride.npy'
 
     def _make_formated_data(self, patient):
         # 整形済みデータを保存していなかった場合は新規作成

@@ -7,7 +7,7 @@ import utils
 from dn3.configuratron import ExperimentConfig
 from dn3.trainable.processes import StandardClassification
 from dn3_ext import BENDRClassification, LinearHeadBENDR
-from result_tracking import ThinkerwiseResultTracker
+from result_tracking import ThinkerwiseResultTracker, Thinker
 
 import mne
 mne.set_log_level(False)
