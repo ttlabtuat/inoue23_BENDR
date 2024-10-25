@@ -222,3 +222,7 @@ dataset/
 
 # model weights
 pretrained_weights/
+
+# test codes and outputs
+test.py
+result.txt
