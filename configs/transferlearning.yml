@@ -1,0 +1,34 @@
+# configs/transferlearning.yml
+
+Configuratron:
+  sfreq: 256
+
+encoder_weights: pretrained_weights/encoder.pt
+context_weights: pretrained_weights/contextualizer.pt
+
+datasets:
+  my_dataset:
+    toplevel: dataset/EDF_labeled_CECTS50_JBHI/
+    format: edf
+    preload: True
+    tlen: 1.0
+    targets:
+      type: categorical
+      column: 'label'  # ラベルのカラム名を正しく設定
+    transforms:
+      - type: To1020
+
+# トレーニングパラメータ
+training_params:
+  epochs: 50
+  batch_size: 32
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+
+# デバッグモード用のトレーニングパラメータ
+debug_training_params:
+  epochs: 1
+  batch_size: 4
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  debug_subset_size: 100
