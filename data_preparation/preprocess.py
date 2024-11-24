@@ -1,3 +1,39 @@
+"""
+This script preprocesses EEG data from EDF files and saves the preprocessed data along with labels.
+
+Classes:
+    CFG: Configuration class containing various settings for preprocessing.
+
+Functions:
+    get_file_names():
+        Retrieves the file names of all EDF files in the input directory.
+        Returns:
+            list: A list of file paths to the EDF files.
+
+    preprocess_data(dm):
+        Preprocesses the EEG data from the DataMaker object.
+        Args:
+            dm (DataMakerCont2): An instance of DataMakerCont2 containing the EEG data.
+        Returns:
+            list: A list of preprocessed mne.io.RawArray objects.
+
+    get_labels(dm):
+        Retrieves the labels associated with the EEG data.
+        Args:
+            dm (DataMakerCont2): An instance of DataMakerCont2 containing the EEG data.
+        Returns:
+            list: A list of labels.
+
+    save_edf_files(datas, labels, file_names):
+        Saves the preprocessed EEG data and labels to disk.
+        Args:
+            datas (list): A list of preprocessed mne.io.RawArray objects.
+            labels (list): A list of labels.
+            file_names (list): A list of original EDF file paths.
+
+Usage:
+    Run the script to preprocess EEG data from EDF files and save the results.
+"""
 import os
 
 import mne
