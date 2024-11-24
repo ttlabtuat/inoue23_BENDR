@@ -47,8 +47,18 @@ def preprocess_data(dm):
     return preprocessed_datas
 
 
-def save_edf_files(datas, file_names):
-    for data, file_name in zip(datas, file_names):
+def get_labels(dm):
+    labels = []
+    for i in range(CFG.n_files):
+        pt = dm.patients[i]
+        data = dm[pt].all
+        label = data['label']
+        labels.append(label)
+    return labels
+
+
+def save_edf_files(datas, labels, file_names):
+    for data, label, file_name in zip(datas, labels, file_names):
         base_name = os.path.basename(file_name)
         sub_directory = os.path.join(CFG.output_directory, os.path.splitext(base_name)[0])
         os.makedirs(sub_directory, exist_ok=True)
@@ -56,6 +66,7 @@ def save_edf_files(datas, file_names):
         save_path = os.path.join(sub_directory, f'{name_without_ext}.fif')
         data.save(save_path, overwrite=True)
         print(f"Successfully saved {save_path}")
+        np.savetxt(os.path.join(sub_directory, f'{name_without_ext}.csv'), label, delimiter=',', fmt='%d')
 
 
 if __name__ == '__main__':
@@ -64,5 +75,6 @@ if __name__ == '__main__':
     # Preprocess the EDF files
     dm = DataMakerCont2()
     preprocessed_datas = preprocess_data(dm)
+    labels = get_labels(dm)
     # Save the preprocessed data
-    save_edf_files(datas=preprocessed_datas, file_names=file_names)
+    save_edf_files(datas=preprocessed_datas, labels=labels, file_names=file_names)
