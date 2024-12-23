@@ -216,6 +216,7 @@ fabric.properties
 # Python Library
 dn3/
 EDFLIB
+dn3*
 
 # dataset
 dataset/
