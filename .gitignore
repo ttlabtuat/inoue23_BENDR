@@ -227,3 +227,6 @@ pretrained_weights/
 # test codes and outputs
 test.py
 result.txt
+
+# vscode settings
+.vscode/launch.json
