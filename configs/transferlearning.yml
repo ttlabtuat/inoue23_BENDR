@@ -1,22 +1,23 @@
 # configs/transferlearning.yml
 
 Configuratron:
+  preload: True
   sfreq: 256
+  deep1010:
+    return_mask: False
+
 
 encoder_weights: pretrained_weights/encoder.pt
 context_weights: pretrained_weights/contextualizer.pt
 
 datasets:
   my_dataset:
-    toplevel: dataset/EDF_labeled_CECTS50_JBHI/
-    format: edf
-    preload: True
+    # name: "EDF Labeled CECTS50 JBHI"
+    toplevel: dataset/preprocessed_EDF_labeled_CECTS50_JBHI/
+    extensions:
+      - .edf
     tlen: 1.0
-    targets:
-      type: categorical
-      column: 'label'  # ラベルのカラム名を正しく設定
-    transforms:
-      - type: To1020
+    recursive: True  # サブディレクトリを再帰的に探索
 
 # トレーニングパラメータ
 training_params:
