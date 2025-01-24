@@ -409,6 +409,7 @@ class DataMakerRawCont(DataMakerCont):
     def _apply_preprocessing(self, to, patient):
         return to
 
+
 class DataMakerCont2(DataMaker):
     def _make_formated_data(self, patient):
         # 整形済みデータを保存していなかった場合は新規作成
@@ -423,6 +424,7 @@ class DataMakerCont2(DataMaker):
         
         # active_chs をもとにEDFを読み込み
         edf = CREDF(edf_path, active_matches=active_chs)
+
         
         # edfファイルのデータを前処理
         # edf = edf.apply_notch(freq=50)
