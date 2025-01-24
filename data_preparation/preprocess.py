@@ -1,0 +1,116 @@
+"""
+This script preprocesses EEG data from EDF files and saves the preprocessed data along with labels.
+
+Classes:
+    CFG: Configuration class containing various settings for preprocessing.
+
+Functions:
+    get_file_names():
+        Retrieves the file names of all EDF files in the input directory.
+        Returns:
+            list: A list of file paths to the EDF files.
+
+    preprocess_data(dm):
+        Preprocesses the EEG data from the DataMaker object.
+        Args:
+            dm (DataMakerCont2): An instance of DataMakerCont2 containing the EEG data.
+        Returns:
+            list: A list of preprocessed mne.io.RawArray objects.
+
+    get_labels(dm):
+        Retrieves the labels associated with the EEG data.
+        Args:
+            dm (DataMakerCont2): An instance of DataMakerCont2 containing the EEG data.
+        Returns:
+            list: A list of labels.
+
+    save_edf_files(datas, labels, file_names):
+        Saves the preprocessed EEG data and labels to disk.
+        Args:
+            datas (list): A list of preprocessed mne.io.RawArray objects.
+            labels (list): A list of labels.
+            file_names (list): A list of original EDF file paths.
+
+Usage:
+    Run the script to preprocess EEG data from EDF files and save the results.
+"""
+import os
+
+import mne
+import numpy as np
+from tqdm import tqdm
+
+from DataMaker import DataMakerCont2
+
+# Numpyにstr属性がない場合は追加
+if not hasattr(np, 'str'):
+    np.str = str
+
+class CFG:
+    input_directory = 'dataset/EDF_labeled_CECTS50_JBHI'
+    output_directory = 'dataset/preprocessed_EDF_labeled_CECTS50_JBHI'
+    n_files = 50
+    n_channels = 16
+    sampling_rate = 256
+    ch_names=['Fp1', 'Fp2', 'F3', 'F4', 'C3', 'C4', 'P3', 'P4', 'O1', 'O2', 'F7', 'F8', 'T3', 'T4', 'T5', 'T6']
+
+
+def get_file_names():
+    edf_file_names = []
+    for root, _, files in tqdm(os.walk(CFG.input_directory)):
+        for file in files:
+            if file.endswith('.edf'):
+                file_path = os.path.join(root, file)
+                try:
+                    raw = mne.io.read_raw_edf(file_path, preload=True)
+                    print(f"Successfully loaded {file_path}", raw.info)
+                    edf_file_names.append(file_path)
+                except Exception as e:
+                    print(f"Failed to load {file_path}: {e}")
+    return edf_file_names
+
+
+def preprocess_data(dm):
+    preprocessed_datas = []
+    for i in tqdm(range(CFG.n_files)):
+        pt = dm.patients[i]
+        data = dm[pt].all
+        eeg_data = data['data']
+        eeg_data = eeg_data.transpose(2, 1, 0).reshape(CFG.n_channels, -1)
+        info = mne.create_info(ch_names=CFG.ch_names, sfreq=CFG.sampling_rate, ch_types='eeg')
+        raw = mne.io.RawArray(eeg_data, info)
+        preprocessed_datas.append(raw)
+    return preprocessed_datas
+
+
+def get_labels(dm):
+    labels = []
+    for i in range(CFG.n_files):
+        pt = dm.patients[i]
+        data = dm[pt].all
+        label = data['label']
+        labels.append(label)
+    return labels
+
+
+def save_edf_files(datas, labels, file_names):
+    for data, label, file_name in zip(datas, labels, file_names):
+        base_name = os.path.basename(file_name)
+        sub_directory = os.path.join(CFG.output_directory, os.path.splitext(base_name)[0])
+        os.makedirs(sub_directory, exist_ok=True)
+        name_without_ext = os.path.splitext(base_name)[0]
+        save_path = os.path.join(sub_directory, f'{name_without_ext}.fif')
+        data.save(save_path, overwrite=True)
+        print(f"Successfully saved {save_path}")
+        np.savetxt(os.path.join(sub_directory, f'{name_without_ext}.csv'), label, delimiter=',', fmt='%d')
+
+
+if __name__ == '__main__':
+    # Input directory containing the EDF files
+    file_names = get_file_names()
+    # Preprocess the EDF files
+    dm = DataMakerCont2()
+    preprocessed_datas = preprocess_data(dm)
+    labels = get_labels(dm)
+    # Save the preprocessed data
+    save_edf_files(datas=preprocessed_datas, labels=labels, file_names=file_names)

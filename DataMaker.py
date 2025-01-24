@@ -5,8 +5,9 @@ import os
 import numpy as np
 import pandas as pd
 import scipy.stats
-from EDFLIB import CREDF
 from sklearn.model_selection import train_test_split
+
+from EDFLIB import CREDF
 
 '''
 脳波セグメントとラベルのペアを生成するクラスたちです。
@@ -23,9 +24,6 @@ from sklearn.model_selection import train_test_split
 - DataMakerRawCont
     セグメント切り出し方法: DataMakerContと同じ
     前処理: なし（生の波形そのまま）
-- DataMakerCount2
-    セグメント切り出し方法: 脳波記録の戦闘から0.375秒ずつ取得
-    前処理: ノッチフィルタ50Hzとダウンサンプリング256Hzを適用
 '''
 
 
@@ -38,7 +36,7 @@ class DataMaker(object):
     _EDF_PATH = os.path.join(os.environ['HOME'], 'epilepsy_detect/input/EDF_labeled_CECTS50_JBHI/{0}/{0}.edf')
     
     # 1セグメントのサンプル数
-    _SEGMENT_SIZE = 96 # 0.375秒のデータ
+    _SEGMENT_SIZE = 512
     # 1セグメント内におけるピーク点前後のサンプル数の比率
     _SEGMENT_RATIO = (3, 7)
 
@@ -408,45 +406,3 @@ class DataMakerRawCont(DataMakerCont):
 
     def _apply_preprocessing(self, to, patient):
         return to
-
-
-class DataMakerCont2(DataMaker):
-    def _make_formated_data(self, patient):
-        # 整形済みデータを保存していなかった場合は新規作成
-        edf_path = self._EDF_PATH.format(patient)
-        csv_path = edf_path.replace('.edf', '.csv')
-        
-        # CSVからラベル情報を解析
-        labels, times, channels, annotators = self._parse_csv(csv_path)
-        
-        # CSVファイルに出現する全チャンネル名を重複なく取得
-        active_chs = list(self._MP_PATTERN.keys())
-        
-        # active_chs をもとにEDFを読み込み
-        edf = CREDF(edf_path, active_matches=active_chs)
-
-        
-        # edfファイルのデータを前処理
-        # edf = edf.apply_notch(freq=50)
-        # edf = edf.downsample(freq=256)
-
-        # [n_samples, n_channels]の形で raw を取得
-        raw = edf.raw.reshape(edf.n_channels, edf.n_samples).T
-
-        # times配列をx軸index化
-        times_idx = (times * edf.samp_freq).astype(int)
-
-        # 前後0.375秒分のデータ配列を作成
-        n_segments = times_idx.shape[0]
-        data = np.empty((n_segments, self._SEGMENT_SIZE, edf.n_channels))
-
-        n_head_sample = int(
-            self._SEGMENT_RATIO[0] / (self._SEGMENT_RATIO[0] + self._SEGMENT_RATIO[1]) * self._SEGMENT_SIZE)
-        n_tail_sample = int(self._SEGMENT_SIZE - n_head_sample)
-
-        for i, t_idx in enumerate(times_idx):
-            start_idx = (t_idx // self._SEGMENT_SIZE) * self._SEGMENT_SIZE
-            end_idx = start_idx + self._SEGMENT_SIZE
-            data[i] = raw[start_idx:end_idx]
-
-        return (data, labels, times, channels, annotators)

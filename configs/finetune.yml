@@ -1,0 +1,8 @@
+Configuratron:
+  preload: True
+  sfreq: 500
+
+encoder_weights: ../pretrained_weights/encoder.pt
+context_weights: ../pretrained_weights/contextualizer.pt
+
+datasets: ../dataset/EDF_labeled_CECTS50_JBHI/

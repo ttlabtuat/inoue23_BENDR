@@ -1,0 +1,35 @@
+# configs/transferlearning.yml
+
+Configuratron:
+  preload: True
+  sfreq: 256
+  deep1010:
+    return_mask: False
+
+
+encoder_weights: pretrained_weights/encoder.pt
+context_weights: pretrained_weights/contextualizer.pt
+
+datasets:
+  my_dataset:
+    # name: "EDF Labeled CECTS50 JBHI"
+    toplevel: dataset/preprocessed_EDF_labeled_CECTS50_JBHI/
+    extensions:
+      - .edf
+    tlen: 1.0
+    recursive: True  # サブディレクトリを再帰的に探索
+
+# トレーニングパラメータ
+training_params:
+  epochs: 50
+  batch_size: 32
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+
+# デバッグモード用のトレーニングパラメータ
+debug_training_params:
+  epochs: 1
+  batch_size: 4
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  debug_subset_size: 100

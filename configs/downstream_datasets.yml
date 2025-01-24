@@ -76,7 +76,7 @@ sleep-edf:
   name: "Sleep EDFx Cassette"
   filename_format: "SC4{subject:2}{session:1}"
   annotation_format: "SC4{subject:2}{session:1}*Hypnogram*"
-  toplevel: /<path/to>/physionet.org/files/sleep-edfx/1.0.0/sleep-cassette/
+  toplevel: /shared/home/inoue/dataset/physionet.org/files/sleep-edfx/1.0.0/sleep-cassette/
   tmin: 0
   tlen: 30
   data_max: 4460.6

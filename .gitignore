@@ -213,17 +213,20 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
-# Original (from template) .gitignore file
-# Remove Python Library DN3 and EDFLIB
+# Python Library
 dn3/
-EDFLIB/
+EDFLIB
+dn3*
 
-# Remove pretrained weights
-pretrained_weights/
-
-# Remove dataset
+# dataset
 dataset/
 
-# Remove test files
+# model weights
+pretrained_weights/
+
+# test codes and outputs
 test.py
 result.txt
+
+# vscode settings
+.vscode/launch.json
